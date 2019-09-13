@@ -54,15 +54,19 @@ void calcSums(int topog[ROWS][COLS], int sums[ROWS] ) {
    srand(time(NULL));
    int randomIndex;
    int count = 0;
+   int totalMoves = 0;
 
-
+//correctly chooses the shortest path and the cost. Cannot correctly display the sum costs though.
    for( r=0; r<ROWS; r++)
     {
         for (c=0; c<COLS; c++)
         {
             //calculates absolute sum for next elevation change
             //change r and c values to something else to move tile pointers properly?
-            if (r == 0 && c != 5)
+
+            //need to plug in totalMoveCost after c had changed to 5
+
+            if (r == 0 && c != 5) //checks next two tiles when at the top for next adjacent tile
             {
                 firstSum = abs(topog[r][c] - topog[r][c + 1]);
                 secondSum = abs(topog[r][c] - topog[r + 1][c + 1]);
@@ -70,24 +74,31 @@ void calcSums(int topog[ROWS][COLS], int sums[ROWS] ) {
                 {
                     nextElevationTile = topog[r][c + 1];
                     c = c + 1;
-                    totalMoveCost += firstSum;
+                    totalMoveCost += firstSum; //add a counter to the totalMoveCost?
+                    totalMoves++;
                 }
                 else if (secondSum < firstSum)
                 {
                     nextElevationTile = topog[r + 1][c + 1]; //correctly identified elevation in next tile, needs to move actually move pointer to tile
                     r = r + 1;
                     totalMoveCost += secondSum;
+                    totalMoves++;
                 }
-                else
+                else //when firstSum and secondSum are equal in elevation change
                 {
                     tileMoveNum[0] = firstSum;
                     tileMoveNum[1] = secondSum;
                     randomIndex = rand() % 2;
+                    r = r + randomIndex;
+                    totalMoveCost += tileMoveNum[randomIndex];
+                    totalMoves++;
+                    tileMoveNum[0] = topog[r][c + 1];
+                    tileMoveNum[1] = topog[r + 1][c + 1];
                     nextElevationTile = tileMoveNum[randomIndex];
                 }
 
             }
-            else if (r == 4 && c != 5)
+            else if (r == 4 && c != 5) //checks three next adjacent tiles for lowest elevation change
             {
                 firstSum = abs(topog[r][c] - topog[r - 1][c + 1]);
                 secondSum = abs(topog[r][c] - topog[r][c + 1]);
@@ -96,17 +107,24 @@ void calcSums(int topog[ROWS][COLS], int sums[ROWS] ) {
                     nextElevationTile = topog[r - 1][c + 1];
                     r = r - 1;
                     totalMoveCost += firstSum;
+                    totalMoves++;
                 }
                 else if (secondSum < firstSum)
                 {
                     nextElevationTile = topog[r][c + 1];
                     totalMoveCost += secondSum;
+                    totalMoves++;
                 }
                 else
                 {
+                    tileMoveNum[0] = firstSum;
+                    tileMoveNum[1] = secondSum;
+                    randomIndex = rand() % 2;
+                    r = r + randomIndex;
+                    totalMoveCost += tileMoveNum[randomIndex];
+                    totalMoves++;
                     tileMoveNum[0] = topog[r - 1][c + 1];
                     tileMoveNum[1] = topog[r][c + 1];
-                    randomIndex = rand() % 2;
                     nextElevationTile = tileMoveNum[randomIndex];
                 }
             }
@@ -119,31 +137,41 @@ void calcSums(int topog[ROWS][COLS], int sums[ROWS] ) {
                 {
                     nextElevationTile = topog[r - 1][c + 1];
                     totalMoveCost += firstSum;
+                    totalMoves++;
                 }
                 else if ((secondSum < firstSum) && (secondSum < thirdSum))
                 {
                     nextElevationTile = topog[r][c + 1];
                     totalMoveCost += secondSum;
+                    totalMoves++;
                 }
                 else if ((thirdSum < firstSum) && (thirdSum < secondSum))
                 {
                     nextElevationTile = topog[r + 1][c + 1];
                     r = r + 1;
                     totalMoveCost += thirdSum;
+                    totalMoves++;
                 }
                 else
                 {
                     tileMoveNum[0] = firstSum;
                     tileMoveNum[1] = secondSum;
-                    randomIndex = rand() % 2;
+                    tileMoveNum[2] = thirdSum;
+                    randomIndex = rand() % 3;
+                    r = r + randomIndex;
+                    totalMoveCost += tileMoveNum[randomIndex];
+                    totalMoves++;
+                    tileMoveNum[0] = topog[r - 1][c + 1];
+                    tileMoveNum[1] = topog[r][c + 1];
+                    tileMoveNum[2] = topog[r + 1][c + 1];
                     nextElevationTile = tileMoveNum[randomIndex];
                 }
             }
-            else if ((r != 4) && (c == 5))
+            else if ((count != 4) && (c == 5))
             {
+                sums[count] = totalMoveCost;
                 r = 0;
                 c = 0;
-                sums[count] = totalMoveCost;
                 count++;
 
             }
