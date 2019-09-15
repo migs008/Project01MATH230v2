@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
+#include <stdbool.h>
 #define ROWS  5
 #define COLS  6
 void calcSums(int topog[ROWS][COLS], int sumList[ROWS] );
@@ -45,148 +45,235 @@ int main()
  */
 void calcSums(int topog[ROWS][COLS], int sums[ROWS] ) {
    int r,c;
-   //int startingElevation;
-   int nextElevationTile;
-   int firstSum, secondSum, thirdSum;
-   int tileMoveNum[3]; //remove?
+   int currentRow = 0; // do currentRow++ to cycle through the rows
+   int sum1, sum2, sum3;
+   int top, mid, bot;
    int totalMoveCost;
-   int shortestPathSum[5]; //change to ROWS? check if correct if changed
    srand(time(NULL));
-   int randomIndex;
-   int count = 0;
-   int totalMoves = 0;
+   int currentCol = 0;
+   int testSums[ROWS];
+   int colCal = 0;
 
-//correctly chooses the shortest path and the cost. Cannot correctly display the sum costs though.
-   for( r=0; r<ROWS; r++)
+
+
+   void calcPath(int a, int b, int c) //returns totalMoveCost, choose mid if equal in elevation change
+   {
+       int randomTileBox[2];
+       int randomIndex;
+       bool noNegative = true;
+
+       if (a < 0 || c < 0)
+       {
+           noNegative = false;
+       }
+
+
+       if (noNegative == false)
+       {
+           if ((a < 0) && (b < c) || (b == c))
+           {
+                totalMoveCost += b;
+                currentCol = colCal - currentCol + 1;
+           }
+           else if ((a < 0) && (c < b))
+           {
+                totalMoveCost += c;
+                currentRow = currentRow + 1;
+                currentCol = currentCol + 1;
+           }
+           else if ((c < 0) && (a < b))
+           {
+                totalMoveCost += a;
+                currentRow = currentRow - 1;
+                currentCol = currentCol + 1;
+           }
+           else if ((c < 0) && (b < a) || (b == a))
+           {
+                totalMoveCost += b;
+                currentCol = currentCol + 1;
+           }
+           else //when a is equal to c do random selection of path
+           {
+                randomTileBox[0] = a;
+                randomTileBox[1] = c;
+                randomIndex = rand() % 2;
+                totalMoveCost += randomTileBox[randomIndex];
+                if (randomIndex == 0)
+                {
+                currentRow = currentRow - 1;
+                }
+                else
+                {
+                    currentRow = currentRow + 1;
+                    currentCol = currentCol + 1;
+                }
+           }
+       }
+       else //when noNegative is true
+       {
+           if ((a < b) && (a < c))
+           {
+               totalMoveCost += a;
+               currentRow = currentRow - 1;
+               currentCol = currentCol + 1;
+           }
+           else if ((b < a) && (b < c))
+           {
+               totalMoveCost += b;
+               currentCol = currentCol + 1;
+           }
+           else if ((c < a) && (c < b))
+           {
+               totalMoveCost += c;
+               currentRow = currentRow + 1;
+               currentCol = currentCol + 1;
+           }
+           else //when all equal then proceed mid
+           {
+               totalMoveCost += b;
+               currentCol = currentCol + 1;
+           }
+       }
+
+        //fix logic
+        //replace false logic with bool?
+        //seperate the noNegative statements
+       //if ((a < b) && (a < c) && (noNegative == true)) //add the current selected tile
+       //{
+       //    totalMoveCost += a;
+       //    currentRow = currentRow - 1;
+       //}
+       //else if ((b < a) && (b < c) && (noNegative == true))
+       //{
+       //    totalMoveCost += b;
+       //    currentCol = colCal - currentCol + 1;
+       //}
+       //else if ((c < a) && (c < b) && (noNegative == true))
+       //{
+       //    totalMoveCost += c;
+       //    currentRow = currentRow + 1;
+       //    currentCol = currentCol + 1;
+       //}
+       //else if ((a == b) && (b == c) //chooses middle path if all numbers equal
+       //{
+       //    totalMoveCost += b;
+       //}
+       /*
+       else if ((b < c) && (noNegative == false)) //if no top and middle sum is lower
+       {
+           totalMoveCost += b;
+           currentCol = colCal - currentCol + 1;
+       }
+       else if ((c < b) && (noNegative == false)) //if no top and bottom sum is lower
+       {
+           totalMoveCost += c;
+           currentRow = currentRow + 1;
+           currentCol = colCal - currentCol + 1;
+       }
+       else if ((noNegative == false) && (b == c)) // if no top mid and bottom sum are equal then pick mid
+       {
+           totalMoveCost += b;
+           currentCol = colCal - currentCol + 1;
+       }
+       else if ((noNegative == false) && (a < b)) //if no bottom and top is lower than mid
+       {
+           totalMoveCost += a;
+           currentRow = currentRow - 1;
+       }
+       else if ((noNegative == false) && (b < a)) //if no bottom and mid is lower than top
+       {
+           totalMoveCost += b;
+           currentCol = colCal - currentCol + 1;
+       }
+       else if ((noNegative == false) && (a == b)) //if mid and top sum are equal then pick mid
+       {
+           totalMoveCost += b;
+           currentCol = colCal - currentCol + 1;
+       }
+       else if (a == c) //if top and bottom are equal do random
+       {
+           randomTileBox[0] = a;
+           randomTileBox[1] = c;
+           randomIndex = rand() % 2;
+           totalMoveCost += randomTileBox[randomIndex];
+           if (randomIndex == 0)
+           {
+               currentRow = currentRow - 1;
+           }
+           else
+           {
+               currentRow = currentRow + 1;
+               currentCol = colCal - currentCol + 1;
+           }
+       }
+       else //so when everything is equal supposed to be it would pick mid
+       {
+           totalMoveCost += b;
+           currentCol = colCal - currentCol + 1;
+       }
+
+       noNegative = true;
+*/
+   }
+
+   for(r=0; r<ROWS; r++) //build array that takes all starting elevations?
     {
-        for (c=0; c<COLS; c++)
+        totalMoveCost = 0;
+        currentRow = r;
+
+        //-->added c - currentCol to replace c and added c++
+        //-->replaced r with currentRow
+        for(c=0; c<COLS - 1; c++)
         {
-            //calculates absolute sum for next elevation change
-            //change r and c values to something else to move tile pointers properly?
-
-            //need to plug in totalMoveCost after c had changed to 5
-
-            if (r == 0 && c != 5) //checks next two tiles when at the top for next adjacent tile
+            if (currentCol == COLS - 1) //causing error for third sum
             {
-                firstSum = abs(topog[r][c] - topog[r][c + 1]);
-                secondSum = abs(topog[r][c] - topog[r + 1][c + 1]);
-                if (firstSum < secondSum)
-                {
-                    nextElevationTile = topog[r][c + 1];
-                    c = c + 1;
-                    totalMoveCost += firstSum; //add a counter to the totalMoveCost?
-                    totalMoves++;
-                }
-                else if (secondSum < firstSum)
-                {
-                    nextElevationTile = topog[r + 1][c + 1]; //correctly identified elevation in next tile, needs to move actually move pointer to tile
-                    r = r + 1;
-                    totalMoveCost += secondSum;
-                    totalMoves++;
-                }
-                else //when firstSum and secondSum are equal in elevation change
-                {
-                    tileMoveNum[0] = firstSum;
-                    tileMoveNum[1] = secondSum;
-                    randomIndex = rand() % 2;
-                    r = r + randomIndex;
-                    totalMoveCost += tileMoveNum[randomIndex];
-                    totalMoves++;
-                    tileMoveNum[0] = topog[r][c + 1];
-                    tileMoveNum[1] = topog[r + 1][c + 1];
-                    nextElevationTile = tileMoveNum[randomIndex];
-                }
-
+                currentCol = 0;
+                currentRow = 0;
+                currentRow = r;
             }
-            else if (r == 4 && c != 5) //checks three next adjacent tiles for lowest elevation change
-            {
-                firstSum = abs(topog[r][c] - topog[r - 1][c + 1]);
-                secondSum = abs(topog[r][c] - topog[r][c + 1]);
-                if (firstSum < secondSum)
-                {
-                    nextElevationTile = topog[r - 1][c + 1];
-                    r = r - 1;
-                    totalMoveCost += firstSum;
-                    totalMoves++;
-                }
-                else if (secondSum < firstSum)
-                {
-                    nextElevationTile = topog[r][c + 1];
-                    totalMoveCost += secondSum;
-                    totalMoves++;
-                }
-                else
-                {
-                    tileMoveNum[0] = firstSum;
-                    tileMoveNum[1] = secondSum;
-                    randomIndex = rand() % 2;
-                    r = r + randomIndex;
-                    totalMoveCost += tileMoveNum[randomIndex];
-                    totalMoves++;
-                    tileMoveNum[0] = topog[r - 1][c + 1];
-                    tileMoveNum[1] = topog[r][c + 1];
-                    nextElevationTile = tileMoveNum[randomIndex];
-                }
-            }
-            else if (c !=5)
-            {
-                firstSum = abs(topog[r][c] - topog[r - 1][c + 1]);
-                secondSum = abs(topog[r][c] - topog[r][c + 1]);
-                thirdSum = abs(topog[r][c] - topog[r + 1][c + 1]);
-                if ((firstSum < secondSum) && (firstSum < thirdSum)) //check if it works
-                {
-                    nextElevationTile = topog[r - 1][c + 1];
-                    totalMoveCost += firstSum;
-                    totalMoves++;
-                }
-                else if ((secondSum < firstSum) && (secondSum < thirdSum))
-                {
-                    nextElevationTile = topog[r][c + 1];
-                    totalMoveCost += secondSum;
-                    totalMoves++;
-                }
-                else if ((thirdSum < firstSum) && (thirdSum < secondSum))
-                {
-                    nextElevationTile = topog[r + 1][c + 1];
-                    r = r + 1;
-                    totalMoveCost += thirdSum;
-                    totalMoves++;
-                }
-                else
-                {
-                    tileMoveNum[0] = firstSum;
-                    tileMoveNum[1] = secondSum;
-                    tileMoveNum[2] = thirdSum;
-                    randomIndex = rand() % 3;
-                    r = r + randomIndex;
-                    totalMoveCost += tileMoveNum[randomIndex];
-                    totalMoves++;
-                    tileMoveNum[0] = topog[r - 1][c + 1];
-                    tileMoveNum[1] = topog[r][c + 1];
-                    tileMoveNum[2] = topog[r + 1][c + 1];
-                    nextElevationTile = tileMoveNum[randomIndex];
-                }
-            }
-            else if ((count != 4) && (c == 5))
-            {
-                sums[count] = totalMoveCost;
-                r = 0;
-                c = 0;
-                count++;
 
+            if (currentRow != 0 && currentRow != (ROWS - 1)) //will do middle path
+            {
+                sum1 = abs(topog[currentRow][currentCol] - topog[currentRow - 1][currentCol + 1]);
+                sum2 = abs(topog[currentRow][currentCol] - topog[currentRow][currentCol + 1]);
+                sum3 = abs(topog[currentRow][currentCol] - topog[currentRow + 1][currentCol+ 1]);
+                calcPath(sum1, sum2, sum3); //set designated sum to negative value for path determination
+            }
+            else if(currentRow == 0)
+            {
+                sum1 = -1;
+                sum2 = abs(topog[currentRow][currentCol] - topog[currentRow][currentCol + 1]);
+                sum3 = abs(topog[currentRow][currentCol] - topog[currentRow + 1][currentCol + 1]);
+                calcPath(sum1, sum2, sum3);
             }
             else
             {
-                sums[count] = totalMoveCost;
+                sum1 = abs(topog[currentRow][currentCol] - topog[currentRow - 1][currentCol + 1]);
+                sum2 = abs(topog[currentRow][currentCol] - topog[currentRow][currentCol + 1]);
+                sum3 = -1;
+                calcPath(sum1, sum2, sum3);
             }
 
+            /*if (currentCol == COLS - 1)
+            {
+                currentCol = 0;
+                currentRow = 0;
+                currentRow = r + 1;
+            }*/
+
+            sums[r] = totalMoveCost;
 
 
         }
-		//placeholder. Calculate correct sums
-		sums[r] = totalMoveCost;  //place sums in this array. One sum per row
+
+
+		  //place sums in this array. One sum per row
 	}
+
 
 }
 
+//create method that determines path
+
+//add method for determining equals
 
