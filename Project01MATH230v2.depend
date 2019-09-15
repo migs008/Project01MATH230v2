@@ -1,6 +1,6 @@
 # depslib dependency file v1.0
-1568508696 source:c:\users\miguel\dropbox\college\math 230\project01math230v2\main.c
+1568565520 source:c:\users\miguel\dropbox\college\math 230\project01math230v2\main.c
 	<stdio.h>
 	<stdlib.h>
-	<time.h>
+	<stdbool.h>
 
