@@ -5,35 +5,105 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#define ROWS  5
-#define COLS  6
+#define ROWS  3
+#define COLS  5
+#include<string.h>
+#define MAXN 100L
+
 void calcSums(int topog[ROWS][COLS], int sumList[ROWS] );
 
-int main()
+int main(int argc, char* argv[]) //char** argv also ok
 {
-    int topography[ROWS][COLS] =
-	{
-		{ 3011, 2800, 2852, 2808, 2791, 2818 },
-		{ 2972, 2937, 2886, 2860, 2830, 2748 },
-		{ 2937, 2959, 2913, 2864, 2791, 2742 },
-		{ 2999, 2888, 2986, 2910, 2821, 2754 },
-		{ 2909, 3816, 2893, 2997, 2962, 2798 }
-	};
-	int sumList[ROWS] = {0};
-	int r,c;
+    char lineRead[MAXN];
+    int readIntegers[100];
+    int i = 0;
+    int r,c;
+    int num;
+    int topography[ROWS][COLS];
+    int ivalRead;
+    double dvalRead;
+
+    FILE* inFile = fopen("topo983by450.txt", "r"); //open a file from user for reading
+
+    if( inFile == NULL)
+    {
+        exit(1);
+        printf("There was an error opening with opening the file.");
+    }
+
+/************ READ:  NCOLS  and   983 *************************/
+    fscanf(inFile,"%s",lineRead);
+    printf("I just read:  %s \n", lineRead);
+    system("pause");
+
+    fscanf(inFile,"%d",&ivalRead);
+    printf("I just read:  %d \n", ivalRead);
+    system("pause");
+/************* READ:  NROWS  and  450 ************************/
+    fscanf(inFile,"%s",lineRead);
+    printf("I just read:  %s \n", lineRead);
+    system("pause");
+
+    fscanf(inFile,"%d",&ivalRead);
+    printf("I just read:  %d \n", ivalRead);
+    system("pause");
+/************** READ:  xllcorner  and  -123.9417****************/
+    fscanf(inFile,"%s",lineRead);
+    printf("I just read:  %s \n", lineRead);
+    system("pause");
+
+    fscanf(inFile,"%lf",&dvalRead);
+    printf("I just read:  %lf \n", dvalRead);
+    system("pause");
+/************** READ:  yllcorner  and  32.991666666667 ***********/
+    fscanf(inFile,"%s",lineRead);
+    printf("I just read:  %s \n", lineRead);
+    system("pause");
+
+    fscanf(inFile,"%lf",&dvalRead);
+    printf("I just read:  %lf \n", dvalRead);
+    system("pause");
+/************** READ:  cellsize  and   0.016666666667***********/
+    fscanf(inFile,"%s",lineRead);
+    printf("I just read:  %s \n", lineRead);
+    system("pause");
+
+    fscanf(inFile,"%lf",&dvalRead);
+    printf("I just read:  %lf \n", dvalRead);
+    system("pause");
 
 
-	/*  student to implement calcSums */
-	calcSums(topography, sumList ); //pass in topography, get back list of elevation sums
+    while(fscanf(inFile, "%d", &num) > 0)
+    {
+        readIntegers[i] = num;
+        i++;
+    }
 
 
+    int count = 0;
 
-	for(r=0; r < ROWS; r++)
-		printf("%8d %8d \n",r, sumList[r]);  //should display calculated sums
+    for (int r=0; r<ROWS; r++) //converting the 1D array to 2D array
+    {
+        for (int c=0; c<COLS; c++)
+        {
+            topography[r][c] = readIntegers[count];
+            count++;
+        }
+    }
 
+    int sumList[ROWS] = {0};
+    calcSums(topography, sumList ); //pass in topography, get back list of elevation sums
+
+    for(r=0; r < ROWS; r++)
+    {
+        printf("%8d %8d \n",r, sumList[r]);  //should display calculated sums
+    }
+
+    fclose(inFile);
 
     return 0;
 }
+
 
 /*
  *  Receives 2d matrix that represents topography
@@ -142,8 +212,6 @@ void calcSums(int topog[ROWS][COLS], int sums[ROWS] ) {
             if (currentCol == COLS - 1) //resets column and row selection and moves to next row
             {
                 currentCol = 0;
-                currentRow = 0;
-                currentRow = r;
             }
 
             if (currentRow != 0 && currentRow != (ROWS - 1)) //for when three paths are available
@@ -170,9 +238,6 @@ void calcSums(int topog[ROWS][COLS], int sums[ROWS] ) {
 
             sums[r] = totalMoveCost; //place sums in this array. One sum per row
 
-
         }
 	}
-
-
 }
