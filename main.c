@@ -5,8 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#define ROWS  3
-#define COLS  5
+#define ROWS  450        //is the number of columns and rows correct?
+#define COLS  983        //returns similar error. 0xC0000005 is a code for Access Violation error.
 #include<string.h>
 #define MAXN 100L
 
@@ -15,14 +15,14 @@ void calcSums(int topog[ROWS][COLS], int sumList[ROWS] );
 int main(int argc, char* argv[]) //char** argv also ok
 {
     char lineRead[MAXN];
-    int readIntegers[10000]; //memory allocation error? <<<<<<<<<<<
+    int readIntegers[74500]; //memory allocation error? not enough elements allocated but cannot go past 75k for some reason<<<<<<<<<<<
     int i = 0;
     int num;
     int topography[ROWS][COLS];
     int ivalRead;
     double dvalRead;
 
-    FILE* inFile = fopen("1topo983by450.txt", "r"); //open a file from user for reading
+    FILE* inFile = fopen("topo983by450.txt", "r"); //open a file from user for reading
 
     if( inFile == NULL)
     {
@@ -72,12 +72,13 @@ int main(int argc, char* argv[]) //char** argv also ok
     system("pause");
 
 
-    while(fscanf(inFile, "%d", &num) > 0)
+    while(fscanf(inFile, "%d", &num) > 0) //why does this work even with negative values?
     {
         readIntegers[i] = num;
+        printf("Integer: %d \n", readIntegers[i]);
+//        system("pause");
         i++;
-        printf("Integer: %d \n", readIntegers); //works with displaying num, but unable to display correct value from readIntegers <<<<<<<<<
-        system("pause");
+
     }
 
 
@@ -118,7 +119,6 @@ void calcSums(int topog[ROWS][COLS], int sums[ROWS] ) {
    int r,c;
    int currentRow = 0; // do currentRow++ to cycle through the rows
    int sum1, sum2, sum3;
-   int top, mid, bot;
    int totalMoveCost;
    srand(time(NULL));
    int currentCol = 0;
@@ -137,7 +137,7 @@ void calcSums(int topog[ROWS][COLS], int sums[ROWS] ) {
 
        if (noNegative == false) //adds totalMoveCost with least elevation change and moves to that tile if noNegative is false
        {
-           if ((top < 0) && (mid < bot) || (mid == bot))
+           if (((top < 0) && (mid < bot)) || (mid == bot))
            {
                 totalMoveCost += mid;
                 currentCol++;
