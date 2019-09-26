@@ -15,15 +15,14 @@ void calcSums(int topog[ROWS][COLS], int sumList[ROWS] );
 int main(int argc, char* argv[]) //char** argv also ok
 {
     char lineRead[MAXN];
-    int readIntegers[100];
+    int readIntegers[10000]; //memory allocation error? <<<<<<<<<<<
     int i = 0;
-    int r,c;
     int num;
     int topography[ROWS][COLS];
     int ivalRead;
     double dvalRead;
 
-    FILE* inFile = fopen("topo983by450.txt", "r"); //open a file from user for reading
+    FILE* inFile = fopen("1topo983by450.txt", "r"); //open a file from user for reading
 
     if( inFile == NULL)
     {
@@ -77,6 +76,8 @@ int main(int argc, char* argv[]) //char** argv also ok
     {
         readIntegers[i] = num;
         i++;
+        printf("Integer: %d \n", readIntegers); //works with displaying num, but unable to display correct value from readIntegers <<<<<<<<<
+        system("pause");
     }
 
 
@@ -94,7 +95,7 @@ int main(int argc, char* argv[]) //char** argv also ok
     int sumList[ROWS] = {0};
     calcSums(topography, sumList ); //pass in topography, get back list of elevation sums
 
-    for(r=0; r < ROWS; r++)
+    for(int r=0; r < ROWS; r++)
     {
         printf("%8d %8d \n",r, sumList[r]);  //should display calculated sums
     }
@@ -240,4 +241,6 @@ void calcSums(int topog[ROWS][COLS], int sums[ROWS] ) {
 
         }
 	}
+
+
 }
