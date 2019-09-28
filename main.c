@@ -5,20 +5,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#define ROWS  1188        //is the number of columns and rows correct?
-#define COLS  3165        //returns similar error. 0xC0000005 is a code for Access Violation error.
+//#define ROWS  1188
+//#define COLS  3165
 #include<string.h>
 #define MAXN 100L
 
-void calcSums(int topog[ROWS][COLS], int sumList[ROWS] );
+void calcSums(int** topog, int* sumList );
+int** malloc2d(int x, int y);
 
-int readIntegers[ROWS*COLS]; //Global
-int topography[ROWS][COLS];
+int ROWS, COLS;
+int** topography;
+int *readIntegers;
+
+//int readIntegers[ROWS*COLS]; //Global
+//int topography[ROWS][COLS];
 
 int main(int argc, char* argv[]) //char** argv also ok
 {
+
     char lineRead[MAXN];
-//    static int readIntegers[500000]; //memory allocation error? not enough elements allocated but cannot go past 75k for some reason<<<<<<<<<<<
+//    static int readIntegers[50000000];
     int i = 0;
     int num;
 //    int topography[ROWS][COLS];
@@ -27,7 +33,9 @@ int main(int argc, char* argv[]) //char** argv also ok
     int lowValSum = 0;
     int lowValSumRow = 0;
 
-    FILE* inFile = fopen("mtRainier02.asc", "r"); //open a file from user for reading
+//    int** topography;
+
+    FILE* inFile = fopen("topo983by450.txt", "r"); //open a file from user for reading
 
     if( inFile == NULL)
     {
@@ -35,47 +43,44 @@ int main(int argc, char* argv[]) //char** argv also ok
         printf("There was an error opening with opening the file.");
     }
 
-/************ READ:  NCOLS  and   983 *************************/
+/************ READ:  NCOLS  value*************************/
     fscanf(inFile,"%s",lineRead);
-    printf("I just read:  %s \n", lineRead);
-    system("pause");
+    printf("%s: ", lineRead);
 
     fscanf(inFile,"%d",&ivalRead);
-    printf("I just read:  %d \n", ivalRead);
-    system("pause");
-/************* READ:  NROWS  and  450 ************************/
+    printf("%d \n", ivalRead);
+    COLS = ivalRead;
+/************* READ:  NROWS  value************************/
     fscanf(inFile,"%s",lineRead);
-    printf("I just read:  %s \n", lineRead);
-    system("pause");
+    printf("%s: ", lineRead);
 
     fscanf(inFile,"%d",&ivalRead);
-    printf("I just read:  %d \n", ivalRead);
-    system("pause");
-/************** READ:  xllcorner  and  -123.9417****************/
+    printf("%d \n", ivalRead);
+    ROWS = ivalRead;
+/************** READ:  xllcorner  value****************/
     fscanf(inFile,"%s",lineRead);
-    printf("I just read:  %s \n", lineRead);
-    system("pause");
+    printf("%s: ", lineRead);
 
     fscanf(inFile,"%lf",&dvalRead);
-    printf("I just read:  %lf \n", dvalRead);
-    system("pause");
-/************** READ:  yllcorner  and  32.991666666667 ***********/
+    printf("%lf \n", dvalRead);
+/************** READ:  yllcorner  value***********/
     fscanf(inFile,"%s",lineRead);
-    printf("I just read:  %s \n", lineRead);
-    system("pause");
+    printf("%s: ", lineRead);
 
     fscanf(inFile,"%lf",&dvalRead);
-    printf("I just read:  %lf \n", dvalRead);
-    system("pause");
-/************** READ:  cellsize  and   0.016666666667***********/
+    printf("%lf \n", dvalRead);
+/************** READ:  cellsize  value**********/
     fscanf(inFile,"%s",lineRead);
-    printf("I just read:  %s \n", lineRead);
-    system("pause");
+    printf("%s: ", lineRead);
 
     fscanf(inFile,"%lf",&dvalRead);
-    printf("I just read:  %lf \n", dvalRead);
-    system("pause");
+    printf("%lf \n", dvalRead);
 
+    topography = malloc2d(ROWS, COLS);
+
+    readIntegers = (int*) malloc((ROWS * COLS) * sizeof(int));
+
+//    int readIntegers[ROWS * COLS]; //memory allocation error here
 
     while(fscanf(inFile, "%d", &num) == 1) //review this code
     {
@@ -98,7 +103,7 @@ int main(int argc, char* argv[]) //char** argv also ok
         }
     }
 
-    int sumList[ROWS] = {0};
+    int sumList[ROWS];
     calcSums(topography, sumList ); //pass in topography, get back list of elevation sums
 
     lowValSum = sumList[0];
@@ -126,6 +131,14 @@ int main(int argc, char* argv[]) //char** argv also ok
     return 0;
 }
 
+int** malloc2d(int x, int y)
+{ int index;
+    int** t = malloc(x * sizeof(int*));
+    for (index = 0; index < x; index++)
+      t[index] = malloc(y * sizeof(int));
+    return t;
+}
+
 
 /*
  *  Receives 2d matrix that represents topography
@@ -135,7 +148,8 @@ int main(int argc, char* argv[]) //char** argv also ok
  *  Output: sum[]
  *
  */
-void calcSums(int topog[ROWS][COLS], int sums[ROWS] ) {
+void calcSums(int** topog, int* sumList )
+{
    int r,c;
    int currentRow = 0; // do currentRow++ to cycle through the rows
    int sum1, sum2, sum3;
@@ -257,7 +271,7 @@ void calcSums(int topog[ROWS][COLS], int sums[ROWS] ) {
                 calcPath(sum1, sum2, sum3);
             }
 
-            sums[r] = totalMoveCost; //place sums in this array. One sum per row
+            sumList[r] = totalMoveCost; //place sums in this array. One sum per row
 
         }
 	}
