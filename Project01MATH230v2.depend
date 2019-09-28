@@ -1,7 +1,8 @@
 # depslib dependency file v1.0
-1569707936 source:c:\users\miguel\dropbox\college\math 230\project01math230v2\main.c
+1569710124 source:c:\users\miguel\dropbox\college\math 230\project01math230v2\main.c
 	<stdio.h>
 	<stdlib.h>
 	<stdbool.h>
 	<string.h>
+	<time.h>
 
