@@ -5,24 +5,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#define ROWS  450        //is the number of columns and rows correct?
-#define COLS  983        //returns similar error. 0xC0000005 is a code for Access Violation error.
+#define ROWS  1188        //is the number of columns and rows correct?
+#define COLS  3165        //returns similar error. 0xC0000005 is a code for Access Violation error.
 #include<string.h>
 #define MAXN 100L
 
 void calcSums(int topog[ROWS][COLS], int sumList[ROWS] );
 
+int readIntegers[ROWS*COLS]; //Global
+int topography[ROWS][COLS];
+
 int main(int argc, char* argv[]) //char** argv also ok
 {
     char lineRead[MAXN];
-    int readIntegers[74500]; //memory allocation error? not enough elements allocated but cannot go past 75k for some reason<<<<<<<<<<<
+//    static int readIntegers[500000]; //memory allocation error? not enough elements allocated but cannot go past 75k for some reason<<<<<<<<<<<
     int i = 0;
     int num;
-    int topography[ROWS][COLS];
+//    int topography[ROWS][COLS];
     int ivalRead;
     double dvalRead;
+    int lowValSum = 0;
+    int lowValSumRow = 0;
 
-    FILE* inFile = fopen("topo983by450.txt", "r"); //open a file from user for reading
+    FILE* inFile = fopen("mtRainier02.asc", "r"); //open a file from user for reading
 
     if( inFile == NULL)
     {
@@ -72,10 +77,10 @@ int main(int argc, char* argv[]) //char** argv also ok
     system("pause");
 
 
-    while(fscanf(inFile, "%d", &num) > 0) //why does this work even with negative values?
+    while(fscanf(inFile, "%d", &num) == 1) //review this code
     {
         readIntegers[i] = num;
-        printf("Integer: %d \n", readIntegers[i]);
+//        printf("Integer: %d \n", readIntegers[i]);
 //        system("pause");
         i++;
 
@@ -96,10 +101,25 @@ int main(int argc, char* argv[]) //char** argv also ok
     int sumList[ROWS] = {0};
     calcSums(topography, sumList ); //pass in topography, get back list of elevation sums
 
+    lowValSum = sumList[0];
+
     for(int r=0; r < ROWS; r++)
     {
+//        printf("%8d %8d \n",r, sumList[r]);  //should display calculated sums
+
+        //lowValSum = sumList[0];
+
+        if(sumList[r] < lowValSum)
+        {
+            lowValSum = sumList[r];
+            lowValSumRow = r;
+        }
         printf("%8d %8d \n",r, sumList[r]);  //should display calculated sums
+        //printf("Lowest elevation change is row: %d with %d", r, lowestElevChange);
+
     }
+    printf("Lowest elevation change sum: %d \n", lowValSum);
+    printf("Starting row calculated from: %d", lowValSumRow);
 
     fclose(inFile);
 
@@ -241,6 +261,4 @@ void calcSums(int topog[ROWS][COLS], int sums[ROWS] ) {
 
         }
 	}
-
-
 }
