@@ -5,39 +5,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-//#define ROWS  1188
-//#define COLS  3165
 #include<string.h>
+#include <time.h>
 #define MAXN 100L
 
-void calcSums(int** topog, int* sumList );
+void calcSums(int** topog, int* sumList);
 int** malloc2d(int x, int y);
 
 int ROWS, COLS;
 int** topography;
 int *readIntegers;
 
-//int readIntegers[ROWS*COLS]; //Global
-//int topography[ROWS][COLS];
-
 int main(int argc, char* argv[]) //char** argv also ok
 {
-
     char lineRead[MAXN];
-//    static int readIntegers[50000000];
     int i = 0;
     int num;
-//    int topography[ROWS][COLS];
     int ivalRead;
     double dvalRead;
     int lowValSum = 0;
     int lowValSumRow = 0;
 
-//    int** topography;
+    FILE* inFile = fopen(argv[1], "r"); //open a file from user for reading, must set project program arguments to file name beforehand
 
-    FILE* inFile = fopen("topo983by450.txt", "r"); //open a file from user for reading
-
-    if( inFile == NULL)
+    if(inFile == NULL)
     {
         exit(1);
         printf("There was an error opening with opening the file.");
@@ -76,25 +67,19 @@ int main(int argc, char* argv[]) //char** argv also ok
     fscanf(inFile,"%lf",&dvalRead);
     printf("%lf \n", dvalRead);
 
-    topography = malloc2d(ROWS, COLS);
+    topography = malloc2d(ROWS, COLS); //calls memory allocation for 2d array
 
-    readIntegers = (int*) malloc((ROWS * COLS) * sizeof(int));
+    readIntegers = (int*) malloc((ROWS * COLS) * sizeof(int)); //calls memory allocation for array
 
-//    int readIntegers[ROWS * COLS]; //memory allocation error here
-
-    while(fscanf(inFile, "%d", &num) == 1) //review this code
+    while(fscanf(inFile, "%d", &num) == 1) //assigns integers in file to array
     {
         readIntegers[i] = num;
-//        printf("Integer: %d \n", readIntegers[i]);
-//        system("pause");
         i++;
-
     }
-
 
     int count = 0;
 
-    for (int r=0; r<ROWS; r++) //converting the 1D array to 2D array
+    for (int r=0; r<ROWS; r++) //converts the 1D array to 2D array
     {
         for (int c=0; c<COLS; c++)
         {
@@ -104,24 +89,18 @@ int main(int argc, char* argv[]) //char** argv also ok
     }
 
     int sumList[ROWS];
-    calcSums(topography, sumList ); //pass in topography, get back list of elevation sums
+    calcSums(topography, sumList); //pass in topography, get back list of elevation sums
 
-    lowValSum = sumList[0];
+    lowValSum = sumList[0]; //default lowest elevation sum assigned to starting row
 
-    for(int r=0; r < ROWS; r++)
+    for(int r=0; r < ROWS; r++) //finds the lowest elevation sum and its row
     {
-//        printf("%8d %8d \n",r, sumList[r]);  //should display calculated sums
-
-        //lowValSum = sumList[0];
-
         if(sumList[r] < lowValSum)
         {
             lowValSum = sumList[r];
             lowValSumRow = r;
         }
-        printf("%8d %8d \n",r, sumList[r]);  //should display calculated sums
-        //printf("Lowest elevation change is row: %d with %d", r, lowestElevChange);
-
+        printf("%8d %8d \n",r, sumList[r]);  //displays rows and their calculated lowest elevation sum
     }
     printf("Lowest elevation change sum: %d \n", lowValSum);
     printf("Starting row calculated from: %d", lowValSumRow);
@@ -131,8 +110,9 @@ int main(int argc, char* argv[]) //char** argv also ok
     return 0;
 }
 
-int** malloc2d(int x, int y)
-{ int index;
+int** malloc2d(int x, int y) //dynamically allocates memory to 2d array
+{
+    int index;
     int** t = malloc(x * sizeof(int*));
     for (index = 0; index < x; index++)
       t[index] = malloc(y * sizeof(int));
