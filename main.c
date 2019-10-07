@@ -100,7 +100,6 @@ int main(int argc, char* argv[]) //char** argv also ok
             lowValSum = sumList[r];
             lowValSumRow = r;
         }
-        printf("%8d %8d \n",r, sumList[r]);  //displays rows and their calculated lowest elevation sum
     }
     printf("Lowest elevation change sum: %d \n", lowValSum);
     printf("Starting row calculated from: %d", lowValSumRow);
@@ -202,6 +201,7 @@ void calcSums(int** topog, int* sumList )
                 if (randomIndex == 0)
                 {
                     currentRow--;
+                    currentCol++;
                 }
                 else
                 {
@@ -252,7 +252,6 @@ void calcSums(int** topog, int* sumList )
             }
 
             sumList[r] = totalMoveCost; //place sums in this array. One sum per row
-
         }
 	}
 }
